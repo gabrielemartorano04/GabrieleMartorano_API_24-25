@@ -33,14 +33,14 @@ The program reads a sequence of commands from `stdin` and prints the correspondi
 2. **`change_cost <x> <y> <v> <radius>`**
    * Updates the ground exit costs of all hexagons (as well as the traversal costs of all their outgoing air routes) located at a hexagonal distance strictly less than `<radius>` from `(<x>, <y>)`, where `<radius> > 0` and `<v>` is an integer in `[-10, 10]`.
    * Given the hexagonal distance `d = HexDist((x_e, y_e), (x, y))`, the cost of each affected hexagon `(x_e, y_e)` and its outgoing air routes is updated according to:
-     $$\text{new\_cost} = \text{current\_cost} + \left\lfloor v \times \max\left(0, \frac{\text{radius} - d}{\text{radius}}\right) \right\rfloor$$
+     $$\text{cost}_{(x_e, y_e)} = \text{cost}_{(x_e, y_e)} + \left\lfloor v \times \max\left(0, \frac{\text{radius} - \text{HexDist}((x_e, y_e), (x, y))}{\text{radius}}\right) \right\rfloor$$
    * Updated costs are clamped to the interval `[0, 100]`.
    * Prints `OK` on success, or `KO` if the coordinates are out of bounds, `radius <= 0`, or `v` is out of range.
 
 3. **`toggle_air_route <x1> <y1> <x2> <y2>`**
    * Adds (if absent) or removes (if already present) a directed air route from `(<x1>, <y1>)` to `(<x2>, <y2>)`.
    * When adding a new air route, its initial traversal cost is computed as the floored integer average of all currently active outgoing air routes from `(<x1>, <y1>)` and the ground exit cost of `(<x1>, <y1>)` itself (clamped to `[0, 100]`):
-     $$\text{cost} = \left\lfloor \frac{\sum(\text{existing outgoing air route costs}) + \text{ground\_cost}_{(x_1, y_1)}}{\text{air\_route\_count} + 1} \right\rfloor$$
+     $$\text{cost} = \left\lfloor \frac{\sum(\text{outgoing air route costs}) + \text{cost}_{(x_1, y_1)}}{\vert{}\text{outgoing air routes}\vert{} + 1} \right\rfloor$$
    * Prints `OK` on success, or `KO` if either coordinate pair is invalid or if `(<x1>, <y1>)` already has 5 outgoing air routes.
 
 4. **`travel_cost <xp> <yp> <xd> <yd>`**
