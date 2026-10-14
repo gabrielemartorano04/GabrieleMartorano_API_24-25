@@ -33,7 +33,8 @@ The program reads a sequence of commands from `stdin` and prints the correspondi
 2. **`change_cost <x> <y> <v> <radius>`**
    * Updates the ground exit costs of all hexagons (as well as the traversal costs of all their outgoing air routes) located at a hexagonal distance strictly less than `<radius>` from `(<x>, <y>)`, where `<radius> > 0` and `<v>` is an integer in `[-10, 10]`.
    * Given the hexagonal distance `d = HexDist((x_e, y_e), (x, y))`, the cost of each affected hexagon `(x_e, y_e)` and its outgoing air routes is updated according to:
-        $$\text{cost}(x_e, y_e) = \text{cost}(x_e, y_e) + \left\lfloor v \times \max\left(0, \frac{\text{radius} - \text{HexDist}((x_e, y_e), (x, y))}{\text{radius}}\right) \right\rfloor$$
+
+     $$\text{cost}(x_e, y_e) = \text{cost}(x_e, y_e) + \left\lfloor v \times \max\left(0, \frac{\text{radius} - \text{HexDist}((x_e, y_e), (x, y))}{\text{radius}}\right) \right\rfloor$$
    * Updated costs are clamped to the interval `[0, 100]`.
    * Prints `OK` on success, or `KO` if the coordinates are out of bounds, `radius <= 0`, or `v` is out of range.
 
