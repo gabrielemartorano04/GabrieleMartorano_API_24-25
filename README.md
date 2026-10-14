@@ -41,6 +41,7 @@ The program reads a sequence of commands from `stdin` and prints the correspondi
 3. **`toggle_air_route <x1> <y1> <x2> <y2>`**
    * Adds (if absent) or removes (if already present) a directed air route from `(<x1>, <y1>)` to `(<x2>, <y2>)`.
    * When adding a new air route, its initial traversal cost is computed as the floored integer average of all currently active outgoing air routes from `(<x1>, <y1>)` and the ground exit cost of `(<x1>, <y1>)` itself (clamped to `[0, 100]`):
+
      $$\text{cost} = \left\lfloor \frac{\sum(\text{outgoing air route costs}) + \text{cost}_{(x_1, y_1)}}{\vert{}\text{outgoing air routes}\vert{} + 1} \right\rfloor$$
    * Prints `OK` on success, or `KO` if either coordinate pair is invalid or if `(<x1>, <y1>)` already has 5 outgoing air routes.
 
