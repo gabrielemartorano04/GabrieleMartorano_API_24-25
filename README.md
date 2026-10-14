@@ -33,7 +33,7 @@ The program reads a sequence of commands from `stdin` and prints the correspondi
 2. **`change_cost <x> <y> <v> <radius>`**
    * Updates the ground exit costs of all hexagons (as well as the traversal costs of all their outgoing air routes) located at a hexagonal distance strictly less than `<radius>` from `(<x>, <y>)`, where `<radius> > 0` and `<v>` is an integer in `[-10, 10]`.
    * Given the hexagonal distance `d = HexDist((x_e, y_e), (x, y))`, the cost of each affected hexagon `(x_e, y_e)` and its outgoing air routes is updated according to:
-     $$\text{cost}_{(x_e, y_e)} = \text{cost}_{(x_e, y_e)} + \left\lfloor v \times \max\left(0, \frac{\text{radius} - \text{HexDist}((x_e, y_e), (x, y))}{\text{radius}}\right) \right\rfloor$$
+        $$\text{cost}(x_e, y_e) = \text{cost}(x_e, y_e) + \left\lfloor v \times \max\left(0, \frac{\text{radius} - \text{HexDist}((x_e, y_e), (x, y))}{\text{radius}}\right) \right\rfloor$$
    * Updated costs are clamped to the interval `[0, 100]`.
    * Prints `OK` on success, or `KO` if the coordinates are out of bounds, `radius <= 0`, or `v` is out of range.
 
@@ -83,7 +83,7 @@ sudo apt install build-essential gdb valgrind kcachegrind massif-visualizer
 ### Compilation
 Compile the source code using the exact flags adopted by the official Polimi evaluation platform (`-Wall -Werror -std=gnu11 -O2 -lm`):
 ```bash
-gcc -Wall -Werror -std=gnu11 -O2 "27 - bucket queue.c" -o movhex -lm
+gcc -Wall -Werror -std=gnu11 -O2 "MovHex.c" -o movhex -lm
 ```
 
 Alternatively, if you rename the source file to `main.c`, you can create a `Makefile` with:
@@ -99,15 +99,15 @@ and compile by running `make main`.
 
 The program reads commands from `stdin` and writes responses to `stdout`.
 
-### 1. Run a Single Public Test Case
-Pass an input file from the `public_tests/` folder and redirect the output to a file:
+### 1. Run a Single Test Case
+Pass an input file from the `tests/` folder and redirect the output to a file:
 ```bash
-./movhex < public_tests/input_1.txt > program_output.txt
+./movhex < tests/input_1.txt > program_output.txt
 ```
 
 Compare your output against the expected output using `diff` (if the files match, `diff` produces no output):
 ```bash
-diff public_tests/output_1.txt program_output.txt
+diff tests/output_1.txt program_output.txt
 ```
 
 ### 2. Quick Interactive Test
@@ -163,24 +163,24 @@ You can verify memory safety and profile runtime performance using the tools rec
 
 * **AddressSanitizer (ASAN)** — detect out-of-bounds memory accesses and memory corruption:
   ```bash
-  gcc -Wall -Werror -std=gnu11 -O2 -g3 -fsanitize=address "27 - bucket queue.c" -o movhex_asan -lm
-  ./movhex_asan < public_tests/input_1.txt > /dev/null
+  gcc -Wall -Werror -std=gnu11 -O2 -g3 -fsanitize=address "MovHex.c" -o movhex_asan -lm
+  ./movhex_asan < tests/input_1.txt > /dev/null
   ```
 
 * **Valgrind Memcheck** — check for memory leaks, use-after-free, and uninitialized values (compile with `-g3` and **without** `-fsanitize=address`):
   ```bash
-  gcc -Wall -Werror -std=gnu11 -O2 -g3 "27 - bucket queue.c" -o movhex_debug -lm
-  valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./movhex_debug < public_tests/input_1.txt > /dev/null
+  gcc -Wall -Werror -std=gnu11 -O2 -g3 "MovHex.c" -o movhex_debug -lm
+  valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./movhex_debug < tests/input_1.txt > /dev/null
   ```
 
 * **Valgrind Callgrind** — profile CPU instruction counts and execution bottlenecks:
   ```bash
-  valgrind --tool=callgrind ./movhex_debug < public_tests/input_1.txt > /dev/null
+  valgrind --tool=callgrind ./movhex_debug < tests/input_1.txt > /dev/null
   kcachegrind callgrind.out.*
   ```
 
 * **Valgrind Massif** — profile dynamic heap memory usage over time:
   ```bash
-  valgrind --tool=massif ./movhex_debug < public_tests/input_1.txt > /dev/null
+  valgrind --tool=massif ./movhex_debug < tests/input_1.txt > /dev/null
   massif-visualizer massif.out.*
   ```
